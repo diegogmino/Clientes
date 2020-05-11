@@ -11,6 +11,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -28,6 +31,7 @@ import javax.swing.border.EmptyBorder;
 import com.mysql.cj.jdbc.Driver;
 import com.mysql.cj.protocol.Resultset;
 import com.mysql.cj.xdevapi.PreparableStatement;
+import com.mysql.cj.xdevapi.Statement;
 
 public class Ventana extends JFrame {
 	
@@ -86,7 +90,7 @@ public class Ventana extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//crear();
+				crearCliente();
 			}
 		});
 		panelBotones.add(bCrear);
@@ -104,7 +108,7 @@ public class Ventana extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//eliminar();
+				eliminar();
 				
 			}
 		});
@@ -112,6 +116,150 @@ public class Ventana extends JFrame {
 		add(panelBotones, BorderLayout.SOUTH);
 		
 	}
+	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	
+	protected void eliminar() {
+	
+		Connection conexion = null;
+		
+		try {
+			conexion = crearConexion(URL_BASE_DATOS);
+			PreparedStatement ps = conexion.prepareStatement("DELETE FROM clientes WHERE dni = ?");
+			
+			ps.setString(1, txtDNI.getText());
+			int filas = ps.executeUpdate();
+			
+			if (filas == 0) {
+				JOptionPane.showMessageDialog(this, "No existe ningún cliente con DNI " + txtDNI.getText(), "Error al eliminar", JOptionPane.ERROR_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(this, "Se han eliminado correctamente " + filas + " fila(s)", "Eliminar cliente", JOptionPane.INFORMATION_MESSAGE);
+			}	
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Error al eliminar un cliente", JOptionPane.ERROR_MESSAGE);
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e1) {}
+		}
+		
+		limpiar();
+		
+		
+		
+	}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+
+	protected void crearCliente() {
+	
+		Connection conexion = null;
+		
+		try {
+			conexion = crearConexion(URL_BASE_DATOS);
+			PreparedStatement ps = conexion.prepareStatement("INSERT INTO clientes (DNI, Nombre, Ape1, Ape2, Fec_Nac) VALUES (?, ?, ?, ?, ?)");
+			if (!rellenarPS(conexion, ps)) {
+				return;
+			}
+			int filas = ps.executeUpdate();
+			JOptionPane.showMessageDialog(this, "Se han insertado correctamente " + filas + " fila(s)", "Crear cliente", JOptionPane.INFORMATION_MESSAGE);
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Error al insertar un cliente", JOptionPane.ERROR_MESSAGE);
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e1) {}
+		}
+	}
+	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+
+	private boolean rellenarPS(Connection conexion, PreparedStatement ps) {
+		
+		// Rellenar el campo DNI
+		String dni = txtDNI.getText();
+		if (dni.equals("")) {
+			JOptionPane.showMessageDialog(this, "Introduzca un valor para el DNI", "Campo obligatorio", JOptionPane.ERROR_MESSAGE);
+			try {
+				conexion.close();
+			} catch (SQLException e) {}
+			
+			return false;
+		}
+		try {
+			ps.setString(1, dni);
+		} catch (SQLException e) {}
+		//Rellenar el campo nombre
+		String nombre = txtNombre.getText();
+		if (nombre.equals("")) {
+			JOptionPane.showMessageDialog(this, "Introduzca un valor para el nombre", "Campo obligatorio", JOptionPane.ERROR_MESSAGE);
+			try {
+				conexion.close();
+			} catch (SQLException e) {}
+			
+			return false;
+		}
+		try {
+			ps.setString(2, nombre);
+		} catch (SQLException e) {}
+		// Rellenar el campo apellido 1
+		String ape1 = txtPrimerApellido.getText();
+		if (ape1.equals("")) {
+			JOptionPane.showMessageDialog(this, "Introduzca un valor para el primer apellido", "Campo Obligatorio", JOptionPane.ERROR_MESSAGE);
+			try {
+				conexion.close();
+			} catch (SQLException e) {}
+			
+			return false;
+		}
+		try {
+			ps.setString(3, ape1);
+		} catch (SQLException e) {}
+		// Rellenar el campo apellido 2
+		String ape2 = txtSegundoApellido.getText();
+		if (ape2.equals("")) {
+			try {
+				ps.setObject(4, null);
+			} catch (SQLException e) {}
+		} else {
+			try {
+				ps.setString(4, ape2);
+			} catch (SQLException e) {
+				return false;
+			}
+		}
+		// Rellenar fecha de nacimiento
+		String fechaTxt = txtNacimiento.getText();
+		if (fechaTxt.equals("")) {
+			JOptionPane.showMessageDialog(this, "Introdizca una fecha de nacimiento", "Campo obligatorio", JOptionPane.ERROR_MESSAGE);
+			try {
+				conexion.close();
+			} catch (SQLException e) {}
+			
+			return false;
+		}
+		// Creo el formato de fecha requerido
+		SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+		// Creo una variable fecha 
+		Date fechaDate = null;
+		// Paso la fecha en formato String a formato Date de java
+		try {
+			fechaDate = formatoFecha.parse(fechaTxt);
+		} catch (ParseException e) {}
+		// Paso el formato de Date de java al formato de Date de sql
+		java.sql.Date sql = new java.sql.Date(fechaDate.getTime());
+		
+		try {
+			ps.setDate(5, sql);
+		} catch (SQLException e) {}
+		
+		
+		return true;
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 
