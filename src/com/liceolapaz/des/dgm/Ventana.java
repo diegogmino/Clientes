@@ -99,7 +99,7 @@ public class Ventana extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//actualizar();
+				actualizar();
 			}
 		});
 		panelBotones.add(bActualizar);
@@ -117,6 +117,119 @@ public class Ventana extends JFrame {
 		
 	}
 	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	
+	protected void actualizar() {
+	
+		Connection conexion = null;
+		
+		try {
+			conexion = crearConexion(URL_BASE_DATOS);
+			PreparedStatement ps = conexion.prepareStatement("UPDATE clientes SET Nombre = ?, Ape1 = ?, Ape2 = ?, Fec_Nac = ? WHERE DNI = ?");
+			if (!rellenarActualizar(conexion, ps)) {
+				return;
+			}
+			int filas = ps.executeUpdate();
+			JOptionPane.showMessageDialog(this, "Se han actualizado correctamente " + filas + " fila(s)", "Actualizar cliente", JOptionPane.INFORMATION_MESSAGE);
+			conexion.close();
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Error al actualizar un cliente", JOptionPane.ERROR_MESSAGE);
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e1) {}
+		}
+		
+	}
+	
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+
+	private boolean rellenarActualizar(Connection conexion, PreparedStatement ps) {
+		
+		//Rellenar el campo nombre
+		String nombre = txtNombre.getText();
+		if (nombre.equals("")) {
+			JOptionPane.showMessageDialog(this, "Introduzca un valor para el nombre", "Campo obligatorio", JOptionPane.ERROR_MESSAGE);
+			try {
+				conexion.close();
+			} catch (SQLException e) {}
+					
+			return false;
+		}
+		try {
+			ps.setString(1, nombre);
+		} catch (SQLException e) {}
+		// Rellenar el campo apellido 1
+		String ape1 = txtPrimerApellido.getText();
+		if (ape1.equals("")) {
+			JOptionPane.showMessageDialog(this, "Introduzca un valor para el primer apellido", "Campo Obligatorio", JOptionPane.ERROR_MESSAGE);
+			try {
+				conexion.close();
+			} catch (SQLException e) {}
+					
+			return false;
+		}
+		try {
+			ps.setString(2, ape1);
+		} catch (SQLException e) {}
+		// Rellenar el campo apellido 2
+		String ape2 = txtSegundoApellido.getText();
+		if (ape2.equals("")) {
+			try {
+				ps.setObject(3, null);
+			} catch (SQLException e) {}
+		} else {
+			try {
+				ps.setString(3, ape2);
+			} catch (SQLException e) {
+				return false;
+			}
+		}
+		// Rellenar fecha de nacimiento
+		String fechaTxt = txtNacimiento.getText();
+		if (fechaTxt.equals("")) {
+			JOptionPane.showMessageDialog(this, "Introdizca una fecha de nacimiento", "Campo obligatorio", JOptionPane.ERROR_MESSAGE);
+			try {
+				conexion.close();
+			} catch (SQLException e) {}
+				
+			return false;
+		}
+		// Creo el formato de fecha requerido
+		SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+		// Creo una variable fecha 
+		Date fechaDate = null;
+		// Paso la fecha en formato String a formato Date de java
+		try {
+			fechaDate = formatoFecha.parse(fechaTxt);
+		} catch (ParseException e) {}
+		// Paso el formato de Date de java al formato de Date de sql
+		java.sql.Date sql = new java.sql.Date(fechaDate.getTime());
+				
+		try {
+			ps.setDate(4, sql);
+		} catch (SQLException e) {}
+		// Rellenar el campo DNI
+		String dni = txtDNI.getText();
+		if (dni.equals("")) {
+			JOptionPane.showMessageDialog(this, "Introduzca un valor para el DNI", "Campo obligatorio", JOptionPane.ERROR_MESSAGE);
+			try {
+				conexion.close();
+			} catch (SQLException e) {}
+					
+			return false;
+		}
+		try {
+			ps.setString(5, dni);
+		} catch (SQLException e) {}
+		
+		
+	
+	return true;
+	}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	
 	protected void eliminar() {
