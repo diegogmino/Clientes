@@ -465,7 +465,7 @@ public class Ventana extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				mostrarFacturasFiltradas();
 				
 			}
 		});
@@ -478,7 +478,7 @@ public class Ventana extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				mostrarClientes();
 				
 			}
 		});
@@ -488,7 +488,89 @@ public class Ventana extends JFrame {
 		
 		setJMenuBar(menuBar);
 	}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	
+	protected void mostrarClientes() {
+		
+		Connection conexion = null;
+		
+		try {
+			conexion = crearConexion(URL_BASE_DATOS);
+			PreparedStatement ps = conexion.prepareStatement("SELECT * FROM clientes");
+			ResultSet rs = ps.executeQuery();
+			Informe informe = new Informe(rs);
+			informe.setVisible(true);
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Error al mostrar los datos", JOptionPane.ERROR_MESSAGE);
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e1) {} 
+		}
+	
+	
+	}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	
+	protected void mostrarFacturasFiltradas() {
+		
+		String dni = txtDNI.getText();
+		if (dni.equals("")) {
+			
+			mostrarFacturas();
+			
+		} else {
+		
+			Connection conexion = null;
+	
+			try {
+				conexion = crearConexion(URL_BASE_DATOS);
+				PreparedStatement ps = conexion.prepareStatement("SELECT * FROM facturas WHERE facturas.Cliente = ?");
+				ps.setString(1, dni);
+				ResultSet rs = ps.executeQuery();
+				Informe informe = new Informe(rs);
+				informe.setVisible(true);
+			
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Error al mostrar los datos", JOptionPane.ERROR_MESSAGE);
+				try {
+					if (conexion != null) {
+						conexion.close();
+					}
+				} catch (SQLException e1) {} 
+			}
+		
+		}
+	}
+	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+
+	private void mostrarFacturas() {
+	
+		Connection conexion = null;
+		
+		try {
+			conexion = crearConexion(URL_BASE_DATOS);
+			PreparedStatement ps = conexion.prepareStatement("SELECT * FROM facturas");
+			ResultSet rs = ps.executeQuery();
+			Informe informe = new Informe(rs);
+			informe.setVisible(true);
+		
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Error al mostrar los datos", JOptionPane.ERROR_MESSAGE);
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e1) {} 
+		}
+	
+	}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	
 	protected void limpiar() {
@@ -502,7 +584,6 @@ public class Ventana extends JFrame {
 			
 		}
 		
-	
 	}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
