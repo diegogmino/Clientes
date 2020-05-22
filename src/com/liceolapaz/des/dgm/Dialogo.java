@@ -24,6 +24,7 @@ public class Dialogo extends JDialog {
 	private Ventana ventana;
 	
 	public Dialogo() {
+		// Constructor del dialogo
 		super();
 		setTitle("Introduzca usuario y contraseña");
 		setSize(400,300);
@@ -41,7 +42,7 @@ public class Dialogo extends JDialog {
 			public void keyReleased(KeyEvent e) {
 				super.keyReleased(e);
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					// aceptar();
+					aceptar();
 				}
 				
 			}
@@ -57,7 +58,7 @@ public class Dialogo extends JDialog {
 			public void keyReleased(KeyEvent e) {
 				super.keyReleased(e);
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					// aceptar();
+					aceptar();
 				}
 				
 			}
@@ -92,6 +93,7 @@ public class Dialogo extends JDialog {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	
 	private void cancelar() {
+		// Opción de cancelar y cerrar el dialogo
 		if (ventana == null) {
 			System.exit(0);
 		}
@@ -102,6 +104,7 @@ public class Dialogo extends JDialog {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 
 	private void aceptar() {
+		// Opcion de aceptar
 		String usuario;
 		String password;
 		usuario = txtUsuario.getText();

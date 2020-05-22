@@ -9,6 +9,7 @@ import javax.swing.table.DefaultTableModel;
 public class Modelo extends DefaultTableModel {
 	
 	public Modelo (ResultSet rs) {
+		// Método que crea el modelo de la tabla
 		
 		try {
 			ResultSetMetaData rsmd = rs.getMetaData();

@@ -48,6 +48,7 @@ public class Ventana extends JFrame {
 	
 	
 	public Ventana(Dialogo dialogo, String usuario, String password) {
+		// Constructor de la ventana
 		super();
 		this.dialogo = dialogo;
 		this.usuario = usuario;
@@ -57,7 +58,6 @@ public class Ventana extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Clientes");
 		setLayout(new BorderLayout());
-		//setLayout(new GridLayout(2, 1, 50, 0));
 		crearCampos();
 		crearBotones();
 		crearMenu();
@@ -74,6 +74,7 @@ public class Ventana extends JFrame {
 	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	
+	// Creamos la conexión
 	private Connection crearConexion(String url) throws SQLException {
 		return DriverManager.getConnection(url, this.usuario, this.password);
 	}
@@ -81,7 +82,7 @@ public class Ventana extends JFrame {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 
 	private void crearBotones() {
-		
+		// Método que crea los botones en la parte inferior de la ventana
 		JPanel panelBotones = new JPanel();
 		panelBotones.setLayout(new GridLayout(1, 3, 30, 0));
 		panelBotones.setBorder(new EmptyBorder(20,20,20,20));
@@ -120,7 +121,7 @@ public class Ventana extends JFrame {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	
 	protected void actualizar() {
-	
+		// Método que acualiza la información de un cliente
 		Connection conexion = null;
 		
 		try {
@@ -190,7 +191,7 @@ public class Ventana extends JFrame {
 		// Rellenar fecha de nacimiento
 		String fechaTxt = txtNacimiento.getText();
 		if (fechaTxt.equals("")) {
-			JOptionPane.showMessageDialog(this, "Introdizca una fecha de nacimiento", "Campo obligatorio", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Introduzca una fecha de nacimiento", "Campo obligatorio", JOptionPane.ERROR_MESSAGE);
 			try {
 				conexion.close();
 			} catch (SQLException e) {}
@@ -233,7 +234,7 @@ public class Ventana extends JFrame {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	
 	protected void eliminar() {
-	
+		// Método que elimina un cliente un DNI concreto
 		Connection conexion = null;
 		
 		try {
@@ -267,7 +268,8 @@ public class Ventana extends JFrame {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 
 	protected void crearCliente() {
-	
+		// Método que crea un cliente con los datos introdicidos en los campos correspondientes
+		
 		Connection conexion = null;
 		
 		try {
@@ -293,6 +295,7 @@ public class Ventana extends JFrame {
 
 	private boolean rellenarPS(Connection conexion, PreparedStatement ps) {
 		
+		// Método que rellena un ps dado con los datos introducidos en los campos correspondientes
 		// Rellenar el campo DNI
 		String dni = txtDNI.getText();
 		if (dni.equals("")) {
@@ -377,7 +380,7 @@ public class Ventana extends JFrame {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 
 	private void crearCampos() {
-		
+		// Método que crea los campos necesarios y sus JLabel
 		panelCampos = new JPanel();
 		panelCampos.setLayout(new GridLayout(5, 2, 20, 10));
 		panelCampos.setBorder(new EmptyBorder(20,20,20,20));
@@ -408,7 +411,7 @@ public class Ventana extends JFrame {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	private void crearMenu() {
-		
+		// Método que crea el menu superior con todas sus opciones
 		JMenuBar menuBar = new JMenuBar();
 		// Creamos la pestaña de Opciones
 		JMenu menuOpciones = new JMenu("Opciones");
@@ -492,7 +495,7 @@ public class Ventana extends JFrame {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	
 	protected void mostrarClientes() {
-		
+		// Método que muestra una tabla con todos los clientes
 		Connection conexion = null;
 		
 		try {
@@ -517,7 +520,7 @@ public class Ventana extends JFrame {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	
 	protected void mostrarFacturasFiltradas() {
-		
+		// Método que muestra una tabla con las facturas filtradas por cliente
 		String dni = txtDNI.getText();
 		if (dni.equals("")) {
 			
@@ -550,7 +553,7 @@ public class Ventana extends JFrame {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 
 	private void mostrarFacturas() {
-	
+		// Método quue muestra todas las facturas insertadas en la base de datos
 		Connection conexion = null;
 		
 		try {
@@ -574,7 +577,7 @@ public class Ventana extends JFrame {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	
 	protected void limpiar() {
-	
+		// Método que limpia los campos de texto de la ventana y los deja en blanco
 		Component[] componentes = panelCampos.getComponents();
 		for (int i = 0; i < componentes.length; i++) {
 			try {
@@ -589,7 +592,7 @@ public class Ventana extends JFrame {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 
 	protected void cargarDatos() {
-		
+		// Método que carga toda la información insertada de un cliente con un DNI concreto
 		Connection conexion = null;
 		try {
 			conexion = crearConexion(URL_BASE_DATOS);

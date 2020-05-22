@@ -15,6 +15,7 @@ public class Informe extends JDialog {
 	private ResultSet rs;
 	
 	public Informe(ResultSet rs) {
+		// Método constructor de la clase
 		super();
 		this.rs = rs;
 		setSize(1300, 600);
